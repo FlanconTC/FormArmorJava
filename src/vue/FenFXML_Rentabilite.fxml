@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="435.0" prefWidth="572.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controleur.FenFXML_RentabiliteController">
+   <children>
+      <Label layoutX="18.0" layoutY="14.0" text="Session terminées :" underline="true" />
+      <TableView id="tableSessionFinies" fx:id="tableSessionFinies" layoutX="18.0" layoutY="43.0" prefHeight="150.0" prefWidth="288.0">
+        <columns>
+          <TableColumn id="colonneId" fx:id="colonneId" prefWidth="84.0" text="ID SESSION" />
+          <TableColumn id="colonneFormationId" fx:id="colonneFormationId" prefWidth="99.0" text="ID FORMATION" />
+            <TableColumn id="colonneDateSession" fx:id="colonneDateSession" prefWidth="104.0" text="DATE SESSION" />
+        </columns>
+      </TableView>
+      <Label layoutX="320.0" layoutY="14.0" text="Informations sur la session selectionnée :" underline="true" />
+      <Label layoutX="320.0" layoutY="50.0" text="Libellé :" />
+      <Label layoutX="318.0" layoutY="75.0" text="Date session :" />
+      <Label layoutX="318.0" layoutY="101.0" text="Nombre d'inscrits :" />
+      <Label layoutX="318.0" layoutY="127.0" prefHeight="17.0" prefWidth="116.0" text="Taux de remplissage :" />
+      <Label layoutX="318.0" layoutY="155.0" prefHeight="17.0" prefWidth="116.0" text="Nombre d'absents :" />
+      <Label layoutX="18.0" layoutY="200.0" text="Inscrits à la session :" underline="true" />
+      <TableView id="tableClientsInscrits" fx:id="tableClientsInscrits" layoutX="19.0" layoutY="229.0" prefHeight="181.0" prefWidth="288.0">
+        <columns>
+          <TableColumn id="colonneNomClient" fx:id="colonneNomClient" prefWidth="87.0" text="NOM CLIENT" />
+          <TableColumn id="colonneTauxHoraire" fx:id="colonneTauxHoraire" prefWidth="105.0" text="TAUX HORAIRE" />
+            <TableColumn id="colonnePresent" fx:id="colonnePresent" prefWidth="68.0" text="PRÉSENT" />
+        </columns>
+      </TableView>
+      <Label layoutX="318.0" layoutY="200.0" text="Informations complémentaires :" underline="true" />
+      <Label layoutX="318.0" layoutY="241.0" text="Marge :" />
+      <Button id="buttonClose" fx:id="buttonClose" layoutX="402.0" layoutY="338.0" mnemonicParsing="false" onMouseClicked="#handleClosingButton" text="Fermer" />
+      <Label id="lblLibelle" fx:id="lblLibelle" layoutX="486.0" layoutY="50.0" text="-" textAlignment="CENTER" />
+      <Label id="lblDateSession" fx:id="lblDateSession" layoutX="486.0" layoutY="75.0" text="-" textAlignment="CENTER" />
+      <Label id="lblNbInscrits" fx:id="lblNbInscrits" layoutX="486.0" layoutY="101.0" text="-" textAlignment="CENTER" />
+      <Label id="lblTauxRemplissage" fx:id="lblTauxRemplissage" layoutX="486.0" layoutY="127.0" text="-" textAlignment="CENTER" />
+      <Label id="lblNbAbsents" fx:id="lblNbAbsents" layoutX="486.0" layoutY="155.0" text="-" textAlignment="CENTER" />
+      <Label id="lblMarge" fx:id="lblMarge" layoutX="486.0" layoutY="241.0" text="-" textAlignment="CENTER" />
+   </children>
+</AnchorPane>
