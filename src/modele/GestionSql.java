@@ -186,5 +186,39 @@ public class GestionSql
         return lesSessions;
     }
       
-    
+     public static ObservableList<Client> getLesClientsInscrits(int id)
+    {
+        Connection conn;
+        Statement stmt1;
+        Client monClient;
+        ObservableList<Client> lesClients = FXCollections.observableArrayList();
+        try
+        {
+            Class.forName(pilote);
+            conn = DriverManager.getConnection(url,"root","");
+            stmt1 = conn.createStatement();
+            
+            // Liste des clients qui "ont un plan de formation"
+            String req = "SELECT c.* \n" +
+            "FROM client c\n" +
+            "JOIN inscription i ON c.id = i.client_id\n" +
+            "JOIN session_formation sf ON i.sessionformation_id = sf.id\n" +
+            "WHERE sf.id = '" + id + "'";
+            ResultSet rs = stmt1.executeQuery(req);
+            while (rs.next())
+            {
+                monClient = new Client(rs.getInt("id"), rs.getInt("statut_id"), rs.getInt("nbhcompta"), rs.getInt("nbhbur"), rs.getString("username"), rs.getString("password"), rs.getString("adresse"), rs.getString("cp"), rs.getString("ville"), rs.getString("email"), "Présent");
+                lesClients.add(monClient);
+            }
+        }
+        catch (ClassNotFoundException cnfe)
+        {
+            System.out.println("Erreur chargement driver getLesClients : " + cnfe.getMessage());
+        }
+        catch (SQLException se)
+        {
+            System.out.println("Erreur SQL requete getLesClients : " + se.getMessage());
+        }
+        return lesClients;
+    }
 }

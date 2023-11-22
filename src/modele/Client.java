@@ -9,6 +9,7 @@ public class Client
 {
     private int id, statut_id, nbhcpta, nbhbur;
     private String nom, password, adresse, cp, ville, email;
+    public String present;
 
     public Client()
     {
@@ -27,6 +28,32 @@ public class Client
         this.ville = ville;
         this.email = email;
     }
+    public Client(int id, int statut_id, int nbhcpta, int nbhbur, String nom, String password, String adresse, String cp, String ville, String email, String b)
+    {
+        this.id = id;
+        this.statut_id = statut_id;
+        this.nbhcpta = nbhcpta;
+        this.nbhbur = nbhbur;
+        this.nom = nom;
+        this.password = password;
+        this.adresse = adresse;
+        this.cp = cp;
+        this.ville = ville;
+        this.email = email;
+        this.present = b;
+    }
+
+    public String getPresent()
+    {
+        return present;
+    }
+
+    public void setPresent(String present)
+    {
+        this.present = present;
+    }
+
+    
     
     public int getId()
     {
@@ -122,4 +149,5 @@ public class Client
     {
         return String.valueOf(id);
     }
+
 }

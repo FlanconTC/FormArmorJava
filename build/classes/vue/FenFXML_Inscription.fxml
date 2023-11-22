@@ -25,6 +25,6 @@
       </TableView>
       <Label id="lblNomClient" fx:id="lblNomClient" layoutX="14.0" layoutY="126.0" prefHeight="21.0" prefWidth="528.0" />
       <Button id="btnInscription" fx:id="btnInscription" layoutX="14.0" layoutY="417.0" mnemonicParsing="false" onAction="#handleInscription" prefHeight="60.0" prefWidth="577.0" text="INSCRIPTION A LA SESSION SELECTIONNEE" visible="false" />
-      <Button id="btnRentabilite" fx:id="btnRentabilite" layoutX="218.0" layoutY="465.0" mnemonicParsing="false" onAction="#handleRentabiliteButton" text="Résumé des sessions passées" />
+      <Button id="btnRentabilite" fx:id="btnRentabilite" layoutX="218.0" layoutY="487.0" mnemonicParsing="false" onAction="#handleRentabiliteButton" text="Résumé des sessions passées" />
    </children>
 </AnchorPane>

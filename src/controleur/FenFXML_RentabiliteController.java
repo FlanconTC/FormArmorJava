@@ -1,34 +1,29 @@
 package controleur;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import modele.Session;
-import modele.Client;
-
-// Imports relatifs à SQL
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import modele.Client;
 import modele.GestionSql;
+import modele.Session;
 
-public class FenFXML_RentabiliteController implements Initializable
-{
+public class FenFXML_RentabiliteController implements Initializable {
     // Les différents labels pour glisser les résultats.
     @FXML
     Label lblLibelle;
@@ -42,8 +37,8 @@ public class FenFXML_RentabiliteController implements Initializable
     Label lblNbAbsents;
     @FXML
     Label lblMarge;
-    
-    //Le tableau et les trois colonnes relatives aux sessions finies.
+
+    // Le tableau et les trois colonnes relatives aux sessions finies.
     @FXML
     private TableView<Session> tableSessionFinies;
     @FXML
@@ -52,7 +47,7 @@ public class FenFXML_RentabiliteController implements Initializable
     private TableColumn<Session, String> colonneFormationId;
     @FXML
     private TableColumn<Session, String> colonneDateSession;
-    
+
     // Le tableau des inscrits à la session.
     @FXML
     private TableView<Client> tableClientsInscrits;
@@ -61,58 +56,87 @@ public class FenFXML_RentabiliteController implements Initializable
     @FXML
     private TableColumn<Client, String> colonneTauxHoraire;
     @FXML
-    private TableColumn<Client, String> colonnePresent;
-    
-    // Le bouton pour fermer.
+    private TableColumn<Client, Boolean> colonnePresent;
+
     @FXML
     Button buttonClose;
     
-    // La connection.
-    Connection conn;
     
+    int nbInscrits;
+
     @Override
-    public void initialize(URL url, ResourceBundle rb)
-    {   
+    public void initialize(URL url, ResourceBundle rb) {
         ObservableList<Session> lesSessionsFinies = GestionSql.getLesSessionsFinies();
         colonneId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colonneFormationId.setCellValueFactory(new PropertyValueFactory<>("libFormation"));
         colonneDateSession.setCellValueFactory(new PropertyValueFactory<>("date_debut"));
-        
+
         tableSessionFinies.getItems().addAll(lesSessionsFinies);
-        
-        
-      tableSessionFinies.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Session>()
-        {
+
+        tableSessionFinies.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Session>() {
             @Override
-            public void changed(ObservableValue<? extends Session> observable, Session oldValue, Session newValue)
-            {
-                if (newValue != null)
-                {
-                    //obtenir :
-                    // - Le libelle :
-                    lblLibelle.setText(newValue.getLibFormation()); 
-                    // - Le label de date :
+            public void changed(ObservableValue<? extends Session> observable, Session oldValue, Session newValue) {
+                if (newValue != null) {
+                    tableClientsInscrits.getItems().clear();
+                    lblLibelle.setText(newValue.getLibFormation());
                     lblDateSession.setText(newValue.getDate_debut().toString());
-                    // - Le label du nombre d'inscrits :
                     lblNbInscrits.setText(String.valueOf(newValue.getNb_inscrits()));
-                    // - Le label du nombre d'absents : 
-                    // plus tard
-                    //lblTauxRemplissage
+                    nbInscrits = newValue.getNb_inscrits();
                     int taux = newValue.getNb_inscrits() * 100 / newValue.getNb_places();
-                    lblTauxRemplissage.setText(String.valueOf(taux)+"%");
-                    //
-                }
+                    lblTauxRemplissage.setText(String.valueOf(taux) + "%");
+
+                    ObservableList<Client> lesClients = GestionSql.getLesClientsInscrits(newValue.getId());
+                    colonneNomClient.setCellValueFactory(new PropertyValueFactory<>("Nom"));
+                    colonneTauxHoraire.setCellValueFactory(new PropertyValueFactory<>("nbhbur"));
+                    colonnePresent.setCellValueFactory(new PropertyValueFactory<>("present"));
+                    tableClientsInscrits.getItems().addAll(lesClients);
+               
+                 
+              
             }
-        });
-    }    
-    
-    @FXML
-    public void handleClosingButton()
+        }
+    });
+}
+    public void recalculerStat()
     {
-        Stage stage = (Stage) lblMarge.getScene().getWindow();
-        stage.close();
+        int compte = 0;
+        int nbAbsent = 0;
+         List<Client> clients = tableClientsInscrits.getItems();
+         for(Client unClient : clients)
+         {
+             compte ++;
+             if(unClient.getPresent()=="Absent")
+             {
+                 compte --;
+                 nbAbsent ++;
+             }
+         }
+         
+         lblNbAbsents.setText( String.valueOf(nbAbsent));
+
     }
     
     
     
+    @FXML
+    public void changePresence()
+    {
+        Client client = tableClientsInscrits.getSelectionModel().getSelectedItem();
+          if (client != null) {
+        if (client.getPresent().equals("Présent")) {
+            client.setPresent("Absent");
+        } else {
+            client.setPresent("Présent");
+        }
+        tableClientsInscrits.getItems().remove(client);
+        colonnePresent.setCellValueFactory(new PropertyValueFactory<>("present"));
+        tableClientsInscrits.getItems().add(client);
+        recalculerStat();
+        }
+    }
+    @FXML
+    public void handleClosingButton() {
+        Stage stage = (Stage) lblMarge.getScene().getWindow();
+        stage.close();
+    }
 }
