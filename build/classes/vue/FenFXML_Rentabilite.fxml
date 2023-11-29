@@ -9,7 +9,7 @@
 <AnchorPane id="AnchorPane" prefHeight="435.0" prefWidth="572.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controleur.FenFXML_RentabiliteController">
    <children>
       <Label layoutX="18.0" layoutY="14.0" text="Session terminées :" underline="true" />
-      <TableView id="tableSessionFinies" fx:id="tableSessionFinies" layoutX="18.0" layoutY="43.0" prefHeight="150.0" prefWidth="288.0">
+      <TableView id="tableSessionFinies" fx:id="tableSessionFinies" layoutX="18.0" layoutY="43.0" onMouseClicked="#onSessionChosen" prefHeight="150.0" prefWidth="288.0">
         <columns>
           <TableColumn id="colonneId" fx:id="colonneId" prefWidth="84.0" text="ID SESSION" />
           <TableColumn id="colonneFormationId" fx:id="colonneFormationId" prefWidth="99.0" text="ID FORMATION" />
@@ -17,7 +17,7 @@
         </columns>
       </TableView>
       <Label layoutX="320.0" layoutY="14.0" text="Informations sur la session selectionnée :" underline="true" />
-      <Label layoutX="320.0" layoutY="50.0" text="Libellé :" />
+      <Label id="lblLibelle" fx:id="lblLibelle" layoutX="320.0" layoutY="50.0" text="Libellé :" />
       <Label layoutX="318.0" layoutY="75.0" text="Date session :" />
       <Label layoutX="318.0" layoutY="101.0" text="Nombre d'inscrits :" />
       <Label layoutX="318.0" layoutY="127.0" prefHeight="17.0" prefWidth="116.0" text="Taux de remplissage :" />
@@ -39,5 +39,6 @@
       <Label id="lblTauxRemplissage" fx:id="lblTauxRemplissage" layoutX="486.0" layoutY="127.0" text="-" textAlignment="CENTER" />
       <Label id="lblNbAbsents" fx:id="lblNbAbsents" layoutX="486.0" layoutY="155.0" text="-" textAlignment="CENTER" />
       <Label id="lblMarge" fx:id="lblMarge" layoutX="486.0" layoutY="241.0" text="-" textAlignment="CENTER" />
+      <Button id="btnAbsent" fx:id="btnAbsent" layoutX="346.0" layoutY="295.0" mnemonicParsing="false" onAction="#sendAMail" text="Notifier les absents par mail" />
    </children>
 </AnchorPane>

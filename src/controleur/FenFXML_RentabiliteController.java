@@ -3,25 +3,23 @@ package controleur;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
+import java.util.Properties;
+import javax.mail.*;
+import javax.mail.internet.*;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
+
+import modele.Session;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import modele.Client;
 import modele.GestionSql;
-import modele.Session;
+
 
 public class FenFXML_RentabiliteController implements Initializable {
     // Les différents labels pour glisser les résultats.
@@ -38,15 +36,17 @@ public class FenFXML_RentabiliteController implements Initializable {
     @FXML
     Label lblMarge;
 
+    @FXML
+    Button btnAbsent;
     // Le tableau et les trois colonnes relatives aux sessions finies.
     @FXML
-    private TableView<Session> tableSessionFinies;
+    private TableView<modele.Session> tableSessionFinies;
     @FXML
-    private TableColumn<Session, String> colonneId;
+    private TableColumn<modele.Session, String> colonneId;
     @FXML
-    private TableColumn<Session, String> colonneFormationId;
+    private TableColumn<modele.Session, String> colonneFormationId;
     @FXML
-    private TableColumn<Session, String> colonneDateSession;
+    private TableColumn<modele.Session, String> colonneDateSession;
 
     // Le tableau des inscrits à la session.
     @FXML
@@ -66,36 +66,19 @@ public class FenFXML_RentabiliteController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        ObservableList<Session> lesSessionsFinies = GestionSql.getLesSessionsFinies();
+        ObservableList<modele.Session> lesSessionsFinies = GestionSql.getLesSessionsFinies();
         colonneId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colonneFormationId.setCellValueFactory(new PropertyValueFactory<>("libFormation"));
         colonneDateSession.setCellValueFactory(new PropertyValueFactory<>("date_debut"));
 
         tableSessionFinies.getItems().addAll(lesSessionsFinies);
 
-        tableSessionFinies.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Session>() {
-            @Override
-            public void changed(ObservableValue<? extends Session> observable, Session oldValue, Session newValue) {
-                if (newValue != null) {
-                    tableClientsInscrits.getItems().clear();
-                    lblLibelle.setText(newValue.getLibFormation());
-                    lblDateSession.setText(newValue.getDate_debut().toString());
-                    lblNbInscrits.setText(String.valueOf(newValue.getNb_inscrits()));
-                    nbInscrits = newValue.getNb_inscrits();
-                    int taux = newValue.getNb_inscrits() * 100 / newValue.getNb_places();
-                    lblTauxRemplissage.setText(String.valueOf(taux) + "%");
-
-                    ObservableList<Client> lesClients = GestionSql.getLesClientsInscrits(newValue.getId());
-                    colonneNomClient.setCellValueFactory(new PropertyValueFactory<>("Nom"));
-                    colonneTauxHoraire.setCellValueFactory(new PropertyValueFactory<>("nbhbur"));
-                    colonnePresent.setCellValueFactory(new PropertyValueFactory<>("present"));
-                    tableClientsInscrits.getItems().addAll(lesClients);
-               
-                 
+  
+          
               
-            }
-        }
-    });
+            
+        
+   
 }
     public void recalculerStat()
     {
@@ -116,7 +99,31 @@ public class FenFXML_RentabiliteController implements Initializable {
 
     }
     
-    
+    @FXML
+    public void onSessionChosen()
+    {
+   
+            tableClientsInscrits.getItems().clear();
+            modele.Session newValue = tableSessionFinies.getSelectionModel().getSelectedItem();
+            if(newValue != null)
+            {
+                lblLibelle.setText(newValue.getLibFormation());
+                
+                lblDateSession.setText(newValue.getDate_debut().toString());
+                lblNbInscrits.setText(String.valueOf(newValue.getNb_inscrits()));
+                nbInscrits = newValue.getNb_inscrits();
+                int taux = newValue.getNb_inscrits() * 100 / newValue.getNb_places();
+                lblTauxRemplissage.setText(String.valueOf(taux) + "%");
+               
+                ObservableList<Client> lesClients = GestionSql.getLesClientsInscrits(newValue.getId());
+                colonneNomClient.setCellValueFactory(new PropertyValueFactory<>("Nom"));
+                colonneTauxHoraire.setCellValueFactory(new PropertyValueFactory<>("nbhbur"));
+                colonnePresent.setCellValueFactory(new PropertyValueFactory<>("present"));
+                tableClientsInscrits.getItems().addAll(lesClients);
+            }
+
+    }
+                
     
     @FXML
     public void changePresence()
@@ -138,5 +145,57 @@ public class FenFXML_RentabiliteController implements Initializable {
     public void handleClosingButton() {
         Stage stage = (Stage) lblMarge.getScene().getWindow();
         stage.close();
+    }
+    
+   @FXML
+    public void sendAMail() {
+        String username = "philippe.logiou@orange.fr";
+        String password = "Dbrcecpldb2024!";
+
+        Properties props = new Properties();
+        props.put("mail.smtp.ssl.protocols", "TLSv1.2");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.ssl.trust", "smtp.orange.fr");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.orange.fr");
+        props.put("mail.smtp.port", "587");
+        props.setProperty("mail.smtp.starttls.enable", "true");
+        // Création de la session
+        javax.mail.Session session = javax.mail.Session.getInstance(props, new javax.mail.Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password);
+            }
+        });
+ 
+        try {
+            // Récupérer la liste des clients absents
+            ObservableList<Client> lesClientsAbsents = tableClientsInscrits.getItems();
+
+            // Parcourir la liste
+            for (Client unClient : lesClientsAbsents) {
+           
+                if (unClient.getPresent().equals("Absent")) {
+                    // Créer le message
+                    Message message = new MimeMessage(session);
+           
+                    message.setFrom(new InternetAddress("philippe.logiou@orange.fr"));
+     
+                    message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(unClient.getEmail()));
+
+                    message.setSubject("Sujet de l'e-mail pour " + unClient.getNom());
+                    message.setText("Contenu de l'e-mail pour " + unClient.getNom());
+
+                    System.out.println("3");
+                    Transport.send(message);
+                    System.out.println("4");
+                    System.out.println("E-mail envoyé à " + unClient.getNom());  
+
+                    
+                }
+            }
+        } catch (MessagingException e) {
+            
+            throw new RuntimeException(e);
+        }
     }
 }
