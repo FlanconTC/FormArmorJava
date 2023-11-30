@@ -61,7 +61,7 @@ public class FenFXML_RentabiliteController implements Initializable {
     @FXML
     Button buttonClose;
     
-    
+    private int idFormClick;
     int nbInscrits;
 
     @Override
@@ -102,11 +102,13 @@ public class FenFXML_RentabiliteController implements Initializable {
     @FXML
     public void onSessionChosen()
     {
-   
+
             tableClientsInscrits.getItems().clear();
+              
             modele.Session newValue = tableSessionFinies.getSelectionModel().getSelectedItem();
             if(newValue != null)
             {
+                 idFormClick = newValue.getId();
                 lblLibelle.setText(newValue.getLibFormation());
                 
                 lblDateSession.setText(newValue.getDate_debut().toString());
@@ -125,22 +127,43 @@ public class FenFXML_RentabiliteController implements Initializable {
     }
                 
     
-    @FXML
-    public void changePresence()
+   @FXML
+    public void changePresence() 
     {
-        Client client = tableClientsInscrits.getSelectionModel().getSelectedItem();
-          if (client != null) {
-        if (client.getPresent().equals("Présent")) {
-            client.setPresent("Absent");
-        } else {
-            client.setPresent("Présent");
-        }
-        tableClientsInscrits.getItems().remove(client);
-        colonnePresent.setCellValueFactory(new PropertyValueFactory<>("present"));
-        tableClientsInscrits.getItems().add(client);
-        recalculerStat();
+        TableView.TableViewSelectionModel<Client> selectionModel = tableClientsInscrits.getSelectionModel();
+        Client client = selectionModel.getSelectedItem();
+
+        if (client != null) 
+        {
+            ObservableList<Client> items = tableClientsInscrits.getItems(); 
+
+            int selectedIndex = items.indexOf(client);
+
+            if (client.getPresent().equals("Présent")) 
+            {
+                client.setPresent("Absent");
+           
+                    
+            } 
+            else 
+            {
+                
+
+                client.setPresent("Présent");   
+            }
+            GestionSql.setUnClientAbsent(client.getId(), idFormClick, client.getPresent());
+
+            items.remove(client);
+         
+            items.add(selectedIndex, client);
+
+            tableClientsInscrits.getSelectionModel().clearSelection();
+            tableClientsInscrits.refresh();
+
+            recalculerStat();
         }
     }
+
     @FXML
     public void handleClosingButton() {
         Stage stage = (Stage) lblMarge.getScene().getWindow();
@@ -185,9 +208,9 @@ public class FenFXML_RentabiliteController implements Initializable {
                     message.setSubject("Sujet de l'e-mail pour " + unClient.getNom());
                     message.setText("Contenu de l'e-mail pour " + unClient.getNom());
 
-                    System.out.println("3");
-                    Transport.send(message);
-                    System.out.println("4");
+                    
+                  //  Transport.send(message);
+                    
                     System.out.println("E-mail envoyé à " + unClient.getNom());  
 
                     

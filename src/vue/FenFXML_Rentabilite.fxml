@@ -27,7 +27,7 @@
         <columns>
           <TableColumn id="colonneNomClient" fx:id="colonneNomClient" prefWidth="87.0" text="NOM CLIENT" />
           <TableColumn id="colonneTauxHoraire" fx:id="colonneTauxHoraire" prefWidth="105.0" text="TAUX HORAIRE" />
-            <TableColumn id="colonnePresent" fx:id="colonnePresent" editable="false" prefWidth="95.0" text="PRÉSENT" />
+            <TableColumn id="colonnePresent" fx:id="colonnePresent" editable="false" prefWidth="95.0" text="PRÉSENCE" />
         </columns>
       </TableView>
       <Label layoutX="318.0" layoutY="200.0" text="Informations complémentaires :" underline="true" />

@@ -221,4 +221,33 @@ public class GestionSql
         }
         return lesClients;
     }
+     
+     
+      public static void setUnClientAbsent(int id, int formation, String presence)
+    {
+        Connection conn;
+        Statement stmt1;
+        try
+        {
+            Class.forName(pilote);
+            conn = DriverManager.getConnection(url,"root","");
+            stmt1 = conn.createStatement();
+            
+       
+            String req = "Update inscription" +
+            " Set presence = '"+ presence +
+            "' Where client_id = '"+ id +
+            "' and sessionformation_id = '"+ formation +"';";
+            stmt1.executeUpdate(req);
+         
+        }
+        catch (ClassNotFoundException cnfe)
+        {
+            System.out.println("Erreur chargement driver getLesClients : " + cnfe.getMessage());
+        }
+        catch (SQLException se)
+        {
+            System.out.println("Erreur SQL requete getLesClients : " + se.getMessage());
+        } 
+    }
 }
