@@ -52,8 +52,6 @@ public class Client
     {
         this.present = present;
     }
-
-    
     
     public int getId()
     {

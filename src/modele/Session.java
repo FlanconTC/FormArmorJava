@@ -47,6 +47,7 @@ public class Session
     {
         return libFormation;
     }
+    
     public void setLibFormation(String libFormation)
     {
         this.libFormation = libFormation;

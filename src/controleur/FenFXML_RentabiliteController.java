@@ -12,7 +12,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
-import modele.Session;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -20,8 +19,8 @@ import javafx.stage.Stage;
 import modele.Client;
 import modele.GestionSql;
 
-
-public class FenFXML_RentabiliteController implements Initializable {
+public class FenFXML_RentabiliteController implements Initializable
+{
     // Les différents labels pour glisser les résultats.
     @FXML
     Label lblLibelle;
@@ -36,8 +35,6 @@ public class FenFXML_RentabiliteController implements Initializable {
     @FXML
     Label lblMarge;
 
-    @FXML
-    Button btnAbsent;
     // Le tableau et les trois colonnes relatives aux sessions finies.
     @FXML
     private TableView<modele.Session> tableSessionFinies;
@@ -58,105 +55,90 @@ public class FenFXML_RentabiliteController implements Initializable {
     @FXML
     private TableColumn<Client, Boolean> colonnePresent;
 
-    @FXML
-    Button buttonClose;
-    
+
     private int idFormClick;
-    int nbInscrits;
 
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
+    public void initialize(URL url, ResourceBundle rb)
+    {
         ObservableList<modele.Session> lesSessionsFinies = GestionSql.getLesSessionsFinies();
         colonneId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colonneFormationId.setCellValueFactory(new PropertyValueFactory<>("libFormation"));
         colonneDateSession.setCellValueFactory(new PropertyValueFactory<>("date_debut"));
 
         tableSessionFinies.getItems().addAll(lesSessionsFinies);
+    }
 
-  
-          
-              
-            
-        
-   
-}
     public void recalculerStat()
     {
         int compte = 0;
         int nbAbsent = 0;
-         List<Client> clients = tableClientsInscrits.getItems();
-         for(Client unClient : clients)
-         {
-             compte ++;
-             if(unClient.getPresent().equals("Absent"))
-             {
-                 
-                 compte --;
-                 nbAbsent ++;
-             }
-         }
-         
-        lblNbAbsents.setText( String.valueOf(nbAbsent));
-       
+        List<Client> clients = tableClientsInscrits.getItems();
+        for (Client unClient : clients)
+        {
+            compte++;
+            if (unClient.getPresent().equals("Absent"))
+            {
+
+                compte--;
+                nbAbsent++;
+            }
+        }
+
+        lblNbAbsents.setText(String.valueOf(nbAbsent));
+
     }
-    
+
     @FXML
     public void onSessionChosen()
     {
+        tableClientsInscrits.getItems().clear();
 
-            tableClientsInscrits.getItems().clear();
-              
-            modele.Session newValue = tableSessionFinies.getSelectionModel().getSelectedItem();
-            if(newValue != null)
-            {
-                 idFormClick = newValue.getId();
-                lblLibelle.setText(newValue.getLibFormation());
-                
-                lblDateSession.setText(newValue.getDate_debut().toString());
-                lblNbInscrits.setText(String.valueOf(newValue.getNb_inscrits()));
-                nbInscrits = newValue.getNb_inscrits();
-                int taux = newValue.getNb_inscrits() * 100 / newValue.getNb_places();
-                lblTauxRemplissage.setText(String.valueOf(taux) + "%");
-               
-                ObservableList<Client> lesClients = GestionSql.getLesClientsInscrits(newValue.getId());
-                colonneNomClient.setCellValueFactory(new PropertyValueFactory<>("Nom"));
-                colonneTauxHoraire.setCellValueFactory(new PropertyValueFactory<>("nbhbur"));
-                colonnePresent.setCellValueFactory(new PropertyValueFactory<>("present"));
-                tableClientsInscrits.getItems().addAll(lesClients);
-            }
-             lblMarge.setText(String.valueOf(GestionSql.getMarge(idFormClick) - GestionSql.getPrixSession(idFormClick)));
-            recalculerStat();
+        modele.Session newValue = tableSessionFinies.getSelectionModel().getSelectedItem();
+        if (newValue != null)
+        {
+            idFormClick = newValue.getId();
+            lblLibelle.setText(newValue.getLibFormation());
+
+            lblDateSession.setText(newValue.getDate_debut().toString());
+            lblNbInscrits.setText(String.valueOf(newValue.getNb_inscrits()));
+            newValue.getNb_inscrits();
+            int taux = newValue.getNb_inscrits() * 100 / newValue.getNb_places();
+            lblTauxRemplissage.setText(String.valueOf(taux) + "%");
+
+            ObservableList<Client> lesClients = GestionSql.getLesClientsInscrits(newValue.getId());
+            colonneNomClient.setCellValueFactory(new PropertyValueFactory<>("Nom"));
+            colonneTauxHoraire.setCellValueFactory(new PropertyValueFactory<>("nbhbur"));
+            colonnePresent.setCellValueFactory(new PropertyValueFactory<>("present"));
+            tableClientsInscrits.getItems().addAll(lesClients);
+        }
+        lblMarge.setText(String.valueOf(GestionSql.getMarge(idFormClick) - GestionSql.getPrixSession(idFormClick)));
+        recalculerStat();
     }
-                
-    
-   @FXML
-    public void changePresence() 
+
+    @FXML
+    public void changePresence()
     {
         TableView.TableViewSelectionModel<Client> selectionModel = tableClientsInscrits.getSelectionModel();
         Client client = selectionModel.getSelectedItem();
 
-        if (client != null) 
+        if (client != null)
         {
-            ObservableList<Client> items = tableClientsInscrits.getItems(); 
+            ObservableList<Client> items = tableClientsInscrits.getItems();
 
             int selectedIndex = items.indexOf(client);
 
-            if (client.getPresent().equals("Présent")) 
+            if (client.getPresent().equals("Présent"))
             {
                 client.setPresent("Absent");
-           
-                    
-            } 
-            else 
+            } else
             {
-                
-
-                client.setPresent("Présent");   
+                client.setPresent("Présent");
             }
             GestionSql.setUnClientAbsent(client.getId(), idFormClick, client.getPresent());
 
             items.remove(client);
-         
+
             items.add(selectedIndex, client);
 
             tableClientsInscrits.getSelectionModel().clearSelection();
@@ -167,13 +149,15 @@ public class FenFXML_RentabiliteController implements Initializable {
     }
 
     @FXML
-    public void handleClosingButton() {
+    public void handleClosingButton()
+    {
         Stage stage = (Stage) lblMarge.getScene().getWindow();
         stage.close();
     }
-    
-   @FXML
-    public void sendAMail() {
+
+    @FXML
+    public void sendAMail()
+    {
         String username = "philippe.logiou@orange.fr";
         String password = "Dbrcecpldb2024!";
 
@@ -185,41 +169,45 @@ public class FenFXML_RentabiliteController implements Initializable {
         props.put("mail.smtp.host", "smtp.orange.fr");
         props.put("mail.smtp.port", "587");
         props.setProperty("mail.smtp.starttls.enable", "true");
- 
-        javax.mail.Session session = javax.mail.Session.getInstance(props, new javax.mail.Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
+
+        javax.mail.Session session = javax.mail.Session.getInstance(props, new javax.mail.Authenticator()
+        {
+            protected PasswordAuthentication getPasswordAuthentication()
+            {
                 return new PasswordAuthentication(username, password);
             }
         });
- 
-        try {
+
+        try
+        {
             // Récupérer la liste des clients absents
             ObservableList<Client> lesClientsAbsents = tableClientsInscrits.getItems();
 
             // Parcourir la liste
-            for (Client unClient : lesClientsAbsents) {
-           
-                if (unClient.getPresent().equals("Absent")) {
+            for (Client unClient : lesClientsAbsents)
+            {
+
+                if (unClient.getPresent().equals("Absent"))
+                {
                     // Créer le message
                     Message message = new MimeMessage(session);
-           
+
                     message.setFrom(new InternetAddress("philippe.logiou@orange.fr"));
-     
+
                     message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(unClient.getEmail()));
 
                     message.setSubject("Sujet de l'e-mail pour " + unClient.getNom());
                     message.setText("Contenu de l'e-mail pour " + unClient.getNom());
 
-                    
-                  Transport.send(message);
-                    
-                    System.out.println("E-mail envoyé à " + unClient.getNom());  
+                    Transport.send(message);
 
-                    
+                    System.out.println("E-mail envoyé à " + unClient.getNom());
+
                 }
             }
-        } catch (MessagingException e) {
-            
+        } catch (MessagingException e)
+        {
+
             throw new RuntimeException(e);
         }
     }

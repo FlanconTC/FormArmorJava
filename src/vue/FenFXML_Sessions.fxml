@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controleur.FenFXML_SessionsController">
+   <children>
+       <TableView fx:id="tableSessions" layoutX="18.0" layoutY="79.0" prefHeight="213.0" prefWidth="573.0">
+       <columns>
+           <TableColumn id="colonneId" fx:id="colonneId" prefWidth="50" text="ID">
+           </TableColumn>
+           <TableColumn id="colonneLibFormation" fx:id="colonneLibFormation" prefWidth="104.0" text="Libelle">
+           </TableColumn>
+           <TableColumn id="colonneDateDebut" fx:id="colonneDateDebut" prefWidth="148.0" text="Date de début">
+           </TableColumn>
+           <TableColumn id="colonneNbPlaces" fx:id="colonneNbPlaces" prefWidth="118.0" text="Nombre de places">
+           </TableColumn>
+           <TableColumn id="colonneNbInscrits" fx:id="colonneNbInscrits" prefWidth="150.0" text="Nombre d'inscrits">
+           </TableColumn>
+       </columns>
+   </TableView>
+    <Button layoutX="18.0" layoutY="320.0" onAction="#handleGeneratePDF" text="Generate PDF" />
+   </children>
+</AnchorPane>

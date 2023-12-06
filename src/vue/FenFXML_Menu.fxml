@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="334.0" prefWidth="571.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controleur.FenFXML_MenuController">
+    <stylesheets>
+        <URL value="@fenfxml_inscription.css" />
+    </stylesheets>
+   <children>
+      <Button id="btnBureau" fx:id="btnRentabilite" layoutX="215.0" layoutY="126.0" mnemonicParsing="false" onAction="#fenetreGestionRentabilite" prefHeight="34.0" prefWidth="142.0" text="Rentabilite" />
+      <Button id="btnMembres" fx:id="btnSessions" layoutX="216.0" layoutY="187.0" mnemonicParsing="false" onAction="#fenetreGestionSessions" prefHeight="34.0" prefWidth="142.0" text="Sessions" />
+      <Button id="btnRecu" fx:id="btnRecu" layoutX="215.0" layoutY="248.0" mnemonicParsing="false" onAction="#lancerFenetreRecu" prefHeight="34.0" prefWidth="142.0" text="Reçu" />
+      <Label layoutX="26.0" layoutY="41.0" text="Bienvenue sur l'epace de gestion de l'association.">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>
