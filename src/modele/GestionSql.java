@@ -64,14 +64,7 @@ public class GestionSql
             stmt1 = conn.createStatement();
             
             // Sélection des sessions autorisées pour le client choisi
-            String req = "select c.username, s.id, f.libelle, f.niveau, date_debut, duree, nb_places, nb_inscrits, coutrevient ";
-            req += "from session_formation s, client c, plan_formation p, formation f ";
-            req += "where c.id = '" + client_id + "' ";
-            req += "and p.client_id = c.id and nb_places > nb_inscrits ";
-            req += "and p.formation_id = f.id ";
-            req += "and s.formation_id = f.id ";
-            req += "and close = 0 and effectue = 0 and s.id Not In ";
-            req += "(Select sessionformation_id From inscription Where client_id = '" + client_id + "')";
+            String req = "call sessions_autorisees('" + client_id + "')";
             ResultSet rs = stmt1.executeQuery(req);
             while (rs.next())
             {
@@ -94,16 +87,16 @@ public class GestionSql
     //Requête permettant l'insertion de l'inscription dans la table inscription et
     //la mise à jour de la table session_formation (+1 inscrit) et
     //la mise à jour de la table plan_formation (effectue passe à 1)
-    public static void insereInscription(int matricule, int session_formation_id)
+    public static boolean insereInscription(int matricule, int session_formation_id)
     {
         Connection conn;
         Statement stmt2=null;
-        
+        String present = "Present";
         GregorianCalendar dateJour = new GregorianCalendar();
         String ddate = dateJour.get(GregorianCalendar.YEAR) + "-" + (dateJour.get(GregorianCalendar.MONTH) + 1) + "-" + dateJour.get(GregorianCalendar.DATE);
         // Insertion dans la table inscription
-        String req = "Insert into inscription(client_id, sessionformation_id, date_inscription) values (" + matricule;
-        req += ", " + session_formation_id + ",'" + ddate + "')";
+        String req = "Insert into inscription(client_id, sessionformation_id, date_inscription, presence) values (" + matricule;
+        req += ", " + session_formation_id + ",'" + ddate + "','" + present + "')";
         // M.A.J de la table session_formation (un inscrit de plus)
         String req2 = "Update session_formation set nb_inscrits = nb_inscrits +1 Where id = " + session_formation_id;
         // Récupération du numéro de la session concernée
@@ -123,10 +116,12 @@ public class GestionSql
         catch (ClassNotFoundException cnfe)
         {
             System.out.println("Erreur chargement driver insereInscription : " + cnfe.getMessage());
+            return false;
         }
         catch(Exception e)
         {
             System.out.println("Erreur requete insereInscription " + e.getMessage());
+            return false;
         }
         // M.A.J de la table plan_formation (effectue passe à 1 pour le client et la session concernés)
         String req4 = "Update plan_formation set effectue = 1 Where client_id = " + matricule;
@@ -142,8 +137,11 @@ public class GestionSql
         }
         catch(SQLException sqle)
         {
+            
             System.out.println("Erreur SQL maj des inscriptions : " + sqle.getMessage());
+            return false;
         }
+        return true;
     }
     
     

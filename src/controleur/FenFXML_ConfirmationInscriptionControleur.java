@@ -47,14 +47,26 @@ public class FenFXML_ConfirmationInscriptionControleur implements Initializable
     @FXML
     public void handleInscription()
     {
-        GestionSql.insereInscription(MainApp.getMonClientSelectionne().getId(), MainApp.getMaSessionSelectionnee().getId());
-        //Affichage d'une boite de dialogue de confirmation
-        Alert al = new Alert(Alert.AlertType.INFORMATION);
-        al.setTitle("INSERTION REUSSIE");
-        al.setHeaderText("une insertion et deux maj effectuées");
-        al.setContentText("table insertion, session_formation et plan_formation mises à jour");
-        al.showAndWait();
-        // récupération du stage courant pour fermeture
+        boolean insertOK = GestionSql.insereInscription(MainApp.getMonClientSelectionne().getId(), MainApp.getMaSessionSelectionnee().getId());
+        
+        
+        if(insertOK)
+        {
+            Alert al = new Alert(Alert.AlertType.INFORMATION);
+            al.setTitle("INSERTION REUSSIE");
+            al.setHeaderText("Une insertion et deux maj effectuées");
+            al.setContentText("Tables insertion, session_formation et plan_formation mises à jour");
+            al.showAndWait();
+        }
+        else
+        {
+            Alert al = new Alert(Alert.AlertType.INFORMATION);
+            al.setTitle("INSERTION RATEE");
+            al.setHeaderText("L'insertion ne s'est pas faite.");
+            al.setContentText("Il est probable que le client soit déjà inscrit.");
+            al.showAndWait();
+        }
+ 
         Stage stage = (Stage) txtNom.getScene().getWindow();
         stage.close();
     }
@@ -62,8 +74,10 @@ public class FenFXML_ConfirmationInscriptionControleur implements Initializable
     @FXML
     public void handleAnnulation()
     {
+     
         // récupération du stage courant pour fermeture
         Stage stage = (Stage) txtNom.getScene().getWindow();
         stage.close();
     }
+    
 }

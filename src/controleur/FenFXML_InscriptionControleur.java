@@ -114,6 +114,10 @@ public class FenFXML_InscriptionControleur implements Initializable
             tableSessionsAutorisees.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         }
     }
+    
+   
+    
+    
     @FXML
     public void handleInscription()
     {
