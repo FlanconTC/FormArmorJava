@@ -124,7 +124,7 @@ public class FenFXML_RentabiliteController implements Initializable {
                 colonnePresent.setCellValueFactory(new PropertyValueFactory<>("present"));
                 tableClientsInscrits.getItems().addAll(lesClients);
             }
-             lblMarge.setText(String.valueOf(GestionSql.getMarge(idFormClick)));
+             lblMarge.setText(String.valueOf(GestionSql.getMarge(idFormClick) - GestionSql.getPrixSession(idFormClick)));
             recalculerStat();
     }
                 

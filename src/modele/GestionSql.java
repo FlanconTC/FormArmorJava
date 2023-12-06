@@ -288,4 +288,39 @@ public class GestionSql
         }
         return laMarge;
     }
+       
+       
+        public static float getPrixSession(int id)
+    {
+        Connection conn;
+        Statement stmt1;
+       
+        float prix = 0;
+        try
+        {
+            Class.forName(pilote);
+            conn = DriverManager.getConnection(url,"root","");
+            stmt1 = conn.createStatement();
+            
+            // Liste des clients qui "ont un plan de formation"
+            String req = "SELECT f.coutrevient\n" +
+            " FROM formation f, session_formation sf \n" +
+            " WHERE sf.id = '"+id+"'" +
+            " and f.id = sf.formation_id;";
+            ResultSet rs = stmt1.executeQuery(req);
+            while (rs.next())
+            {
+                prix = rs.getFloat("coutrevient");
+            }
+        }
+        catch (ClassNotFoundException cnfe)
+        {
+            System.out.println("Erreur chargement driver getLesClients : " + cnfe.getMessage());
+        }
+        catch (SQLException se)
+        {
+            System.out.println("Erreur SQL requete getLesClients : " + se.getMessage());
+        }
+        return prix;
+    }
 }
