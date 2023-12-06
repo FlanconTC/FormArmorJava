@@ -88,15 +88,16 @@ public class FenFXML_RentabiliteController implements Initializable {
          for(Client unClient : clients)
          {
              compte ++;
-             if(unClient.getPresent()=="Absent")
+             if(unClient.getPresent().equals("Absent"))
              {
+                 
                  compte --;
                  nbAbsent ++;
              }
          }
          
-         lblNbAbsents.setText( String.valueOf(nbAbsent));
-
+        lblNbAbsents.setText( String.valueOf(nbAbsent));
+       
     }
     
     @FXML
@@ -123,7 +124,8 @@ public class FenFXML_RentabiliteController implements Initializable {
                 colonnePresent.setCellValueFactory(new PropertyValueFactory<>("present"));
                 tableClientsInscrits.getItems().addAll(lesClients);
             }
-
+             lblMarge.setText(String.valueOf(GestionSql.getMarge(idFormClick)));
+            recalculerStat();
     }
                 
     
@@ -183,7 +185,7 @@ public class FenFXML_RentabiliteController implements Initializable {
         props.put("mail.smtp.host", "smtp.orange.fr");
         props.put("mail.smtp.port", "587");
         props.setProperty("mail.smtp.starttls.enable", "true");
-        // Création de la session
+ 
         javax.mail.Session session = javax.mail.Session.getInstance(props, new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(username, password);
@@ -209,7 +211,7 @@ public class FenFXML_RentabiliteController implements Initializable {
                     message.setText("Contenu de l'e-mail pour " + unClient.getNom());
 
                     
-                  //  Transport.send(message);
+                  Transport.send(message);
                     
                     System.out.println("E-mail envoyé à " + unClient.getNom());  
 

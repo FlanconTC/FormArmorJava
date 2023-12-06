@@ -199,15 +199,16 @@ public class GestionSql
             stmt1 = conn.createStatement();
             
             // Liste des clients qui "ont un plan de formation"
-            String req = "SELECT c.* \n" +
-            "FROM client c\n" +
-            "JOIN inscription i ON c.id = i.client_id\n" +
-            "JOIN session_formation sf ON i.sessionformation_id = sf.id\n" +
-            "WHERE sf.id = '" + id + "'";
+            String req = "SELECT c.*, i.presence \n" +
+            " FROM client c\n" +
+            " JOIN inscription i ON c.id = i.client_id\n" +
+            " JOIN session_formation sf ON i.sessionformation_id = sf.id\n" +
+            " WHERE i.sessionformation_id = sf.id\n" +
+            " AND sf.id = '" + id + "'";
             ResultSet rs = stmt1.executeQuery(req);
             while (rs.next())
             {
-                monClient = new Client(rs.getInt("id"), rs.getInt("statut_id"), rs.getInt("nbhcompta"), rs.getInt("nbhbur"), rs.getString("username"), rs.getString("password"), rs.getString("adresse"), rs.getString("cp"), rs.getString("ville"), rs.getString("email"), "Présent");
+                monClient = new Client(rs.getInt("id"), rs.getInt("statut_id"), rs.getInt("nbhcompta"), rs.getInt("nbhbur"), rs.getString("username"), rs.getString("password"), rs.getString("adresse"), rs.getString("cp"), rs.getString("ville"), rs.getString("email"), rs.getString("presence"));
                 lesClients.add(monClient);
             }
         }
@@ -249,5 +250,42 @@ public class GestionSql
         {
             System.out.println("Erreur SQL requete getLesClients : " + se.getMessage());
         } 
+    }
+      
+      
+       public static float getMarge(int id)
+    {
+        Connection conn;
+        Statement stmt1;
+        float laMarge = 0;
+        try
+        {
+            Class.forName(pilote);
+            conn = DriverManager.getConnection(url,"root","");
+            stmt1 = conn.createStatement();
+            
+            String req = "SELECT  DISTINCT(c.id), s.taux_horaire  \n" +
+            " from statut s, client c, formation f  \n" +
+            " where c.statut_id = s.id and c.id in  \n" +
+                " (SELECT DISTINCT c.id  \n" +
+                " FROM client c  \n" +
+                " JOIN inscription i ON c.id = i.client_id \n" +
+                " JOIN session_formation sf ON i.sessionformation_id = sf.id  \n" +
+                " WHERE sf.id = '"+ id +"');";
+            ResultSet rs = stmt1.executeQuery(req);
+            while (rs.next())
+            {
+                laMarge += rs.getFloat("taux_horaire");
+            }
+        }
+        catch (ClassNotFoundException cnfe)
+        {
+            System.out.println("Erreur chargement driver getLesClients : " + cnfe.getMessage());
+        }
+        catch (SQLException se)
+        {
+            System.out.println("Erreur SQL requete getLesClients : " + se.getMessage());
+        }
+        return laMarge;
     }
 }
